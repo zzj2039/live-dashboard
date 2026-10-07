@@ -11,8 +11,11 @@
  */
 package com.monika.dashboard.service
 
+import android.content.Intent
+import android.os.Build
 import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
+import com.monika.dashboard.MainActivity
 import com.monika.dashboard.data.DebugLog
 import com.monika.dashboard.data.SettingsStore
 import kotlinx.coroutines.CoroutineScope
@@ -75,6 +78,22 @@ class DashboardTileService : TileService() {
 
             tile.state = if (newEnabled) Tile.STATE_ACTIVE else Tile.STATE_INACTIVE
             tile.updateTile()
+        }
+    }
+
+    /**
+     * 长按磁贴：跳转到 MainActivity 而非应用详情页。
+     * onTileLongClick() 从 Android 13 (API 33) 起可用；
+     * 更低版本系统仍默认跳应用详情，无法覆盖。
+     */
+    override fun onTileLongClick() {
+        super.onTileLongClick()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            startActivityAndCollapse(
+                Intent(applicationContext, MainActivity::class.java).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
+            )
         }
     }
 
