@@ -142,6 +142,9 @@ export default function Timeline({ segments, summary, currentAppByDevice }: Prop
                         style={{ backgroundColor: app.isCurrent ? `${color}30` : `${color}15` }}
                       >
                         <span className="text-xs font-medium truncate block">
+                          {app.appName}
+                        </span>
+                        <span className="text-[10px] text-[var(--color-text-muted)] truncate block">
                           {app.statusText}
                         </span>
                       </div>
