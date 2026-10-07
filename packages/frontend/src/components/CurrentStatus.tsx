@@ -12,7 +12,8 @@ export default function CurrentStatus({ device, displayName: displayNameProp }: 
   const active = device?.is_online === 1 ? device : undefined;
 
   const isOnline = !!active;
-  const description = active?.status_text ?? "正在忙别的喵~";
+  const description = active?.app_name ?? "Unknown";
+  const statusText = active?.status_text ?? "";
 
   // Battery info from the active device
   const battery = active?.extra;
@@ -55,6 +56,11 @@ export default function CurrentStatus({ device, displayName: displayNameProp }: 
             <p className="text-lg font-bold font-[var(--font-jp)] text-[var(--color-primary)] leading-relaxed status-text">
               {description}
             </p>
+            {statusText && (
+              <p className="text-xs text-[var(--color-text-muted)] mt-1">
+                {statusText}
+              </p>
+            )}
             {detail && (
               <p className="text-xs text-[var(--color-text-muted)] mt-1 break-all">
                 「{detail}」
