@@ -18,11 +18,6 @@ on:
         description: 'Linux source branch/tag/SHA (default: linux-source)'
         default: 'linux-source'
 
-# Architecture: Agent source code lives on dedicated branches (windows-source,
-# macos-source, android-source), not on main. Tag-triggered builds checkout the
-# latest HEAD of each source branch. For reproducible builds, use
-# workflow_dispatch with specific commit SHAs.
-
 jobs:
   build-windows:
     runs-on: windows-latest
@@ -87,10 +82,6 @@ jobs:
           name: linux-agent
           path: agents/linux/dist/live-dashboard-agent
 
-  # CI 里自动构建 APK 的做法借鉴自社区 fork 作者 @nmb1337
-  # （github.com/nmb1337/live-dashboard），感谢他的思路——
-  # 此前 APK 一直靠本地构建后手动上传，tag 一打就自动出包省了整个手工环节。
-  # 未配置签名 keystore secrets，构建 debug APK（与历史发布一致，功能无差别）。
   build-android:
     runs-on: ubuntu-latest
     permissions:
@@ -103,7 +94,10 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - uses: android-actions/setup-android@v3
+      - name: Setup Android SDK
+        run: |
+          echo "y" | ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --licenses
+          ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager "platforms;android-36" "build-tools;36.0.0"
       - name: Build APK
         working-directory: agents/android-app
         run: ./gradlew -q :app:assembleDebug
