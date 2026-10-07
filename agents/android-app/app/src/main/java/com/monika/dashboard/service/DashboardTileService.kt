@@ -8,14 +8,13 @@
  *      （ForegroundServiceStartNotAllowedException），
  *      但 TileService.onClick() 是官方豁免场景——磁贴点击可直接启动前台服务。
  *   3. 磁贴活跃 = 系统认为用户正在主动使用此功能 = 更不容易进后台冻结队列。
+ *
+ * 注：长按磁贴由 SystemUI 接管，固定跳转应用详情页，无公开 API 可覆盖。
  */
 package com.monika.dashboard.service
 
-import android.content.Intent
-import android.os.Build
 import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
-import com.monika.dashboard.MainActivity
 import com.monika.dashboard.data.DebugLog
 import com.monika.dashboard.data.SettingsStore
 import kotlinx.coroutines.CoroutineScope
@@ -78,22 +77,6 @@ class DashboardTileService : TileService() {
 
             tile.state = if (newEnabled) Tile.STATE_ACTIVE else Tile.STATE_INACTIVE
             tile.updateTile()
-        }
-    }
-
-    /**
-     * 长按磁贴：跳转到 MainActivity 而非应用详情页。
-     * onTileLongClick() 从 Android 13 (API 33) 起可用；
-     * 更低版本系统仍默认跳应用详情，无法覆盖。
-     */
-    override fun onTileLongClick() {
-        super.onTileLongClick()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            startActivityAndCollapse(
-                Intent(applicationContext, MainActivity::class.java).apply {
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                }
-            )
         }
     }
 
