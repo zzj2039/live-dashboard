@@ -257,6 +257,23 @@ fun StatusScreen(settings: SettingsStore) {
                 }
             }
             RowDivider()
+            // 磁贴保活提示：引导用户去快捷设置添加磁贴
+            PermissionRow(
+                title = "快捷设置磁贴",
+                subtitle = "下拉通知栏一键开关，磁贴活跃时进程更不易被杀",
+                state = PermState.MANUAL
+            ) {
+                try {
+                    context.startActivity(
+                        Intent(Settings.ACTION_QUICK_SETTINGS).apply {
+                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        }
+                    )
+                } catch (e: Exception) {
+                    Toast.makeText(context, "请下拉通知栏 → 编辑快捷设置 → 添加 Live Dashboard 磁贴", Toast.LENGTH_LONG).show()
+                }
+            }
+            RowDivider()
             // #45：从最近任务隐藏——保活全开也挡不住自己顺手划卡，干脆让卡片不出现
             val hideFromRecents by settings.hideFromRecents.collectAsState(initial = false)
             ToggleRow(
