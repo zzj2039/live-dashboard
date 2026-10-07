@@ -51,7 +51,7 @@ export default function CurrentStatus({ device, displayName: displayNameProp }: 
         {isOnline ? (
           <>
             <p className="text-xs text-[var(--color-text-muted)] mb-1">
-              {displayName} 现在...
+              {active?.device_name ?? displayName} 现在...
             </p>
             <p className="text-lg font-bold font-[var(--font-jp)] text-[var(--color-primary)] leading-relaxed status-text">
               {description}
